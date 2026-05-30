@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>شبکه اجتماعی شهدای اژه‌ای ۲ | پیام‌رسان دانش‌آموزی</title>
+    <!-- Tailwind CSS + Font Awesome 6 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { font-family: 'Vazirmatn', system-ui, Tahoma, sans-serif; }
+        body { background: linear-gradient(145deg, #f7f9fc 0%, #eef2f5 100%); min-height: 100vh; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #e2e8f0; border-radius: 12px; }
+        ::-webkit-scrollbar-thumb { background: #9ca3af; border-radius: 12px; }
+        .tweet-card { transition: all 0.2s ease; }
+        .tweet-card:hover { background-color: #fefce8; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.02); }
+        .like-active { color: #f43f5e !important; }
+        .retweet-active { color: #10b981 !important; }
+        .modal-backdrop { background-color: rgba(0, 0, 0, 0.6); backdrop-filter: blur(4px); }
+        .school-badge { background: linear-gradient(135deg, #1e3a8a, #0f2b5e); }
+        input:focus, textarea:focus { border-color: #f97316 !important; ring-color: #f97316 !important; }
+        .btn-primary { background: linear-gradient(100deg, #f97316, #ea580c); }
+        .btn-primary:hover { background: linear-gradient(100deg, #ea580c, #c2410c); }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <!-- ======================= AUTH CONTAINER ======================= -->
+    <div id="authContainer" class="min-h-screen flex items-center justify-center p-5">
+        <div class="max-w-md w-full bg-white/90 backdrop-blur-sm rounded-2xl shadow-2xl overflow-hidden border border-orange-100">
+            <div class="school-badge p-5 text-center text-white">
+                <i class="fas fa-school text-3xl mb-2"></i>
+                <h1 class="text-2xl font-extrabold">دبیرستان شهدای اژه‌ای ۲</h1>
+                <p class="text-orange-100 text-sm mt-1">شبکه اختصاصی دانش‌آموزان | پیام‌رسان امن</p>
+            </div>
+            <div class="flex border-b border-gray-200">
+                <button id="loginTabBtn" class="w-1/2 py-3 font-bold text-center transition-all border-b-2 border-orange-500 text-orange-600 bg-gray-50">ورود</button>
+                <button id="registerTabBtn" class="w-1/2 py-3 font-bold text-center transition-all text-gray-500 hover:text-orange-500">ثبت‌نام</button>
+            </div>
+            <div id="loginFormPanel" class="p-6 space-y-4">
+                <div><label class="block text-sm font-semibold mb-1">نام کاربری</label><input type="text" id="loginUsername" placeholder="مثال: rezamohammadi" class="w-full border border-gray-300 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-orange-300"></div>
+                <div><label class="block text-sm font-semibold mb-1">رمز عبور</label><input type="password" id="loginPassword" placeholder="••••••••" class="w-full border border-gray-300 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-orange-300"></div>
+                <button id="doLoginBtn" class="btn-primary w-full text-white font-bold py-2.5 rounded-xl shadow-md transition">ورود به شبکه</button>
+                <p class="text-xs text-center text-gray-400 mt-3">فقط دانش‌آموزان مدرسه شهید اژه‌ای ۲ مجاز به عضویت هستند</p>
+            </div>
+            <div id="registerFormPanel" class="p-6 space-y-4 hidden">
+                <div><label class="block text-sm font-semibold mb-1">نام و نام خانوادگی</label><input type="text" id="regFullname" placeholder="رضا محمدی" class="w-full border border-gray-300 rounded-xl px-4 py-2.5"></div>
+                <div><label class="block text-sm font-semibold mb-1">نام کاربری (یکتا)</label><input type="text" id="regUsername" placeholder="rezamohammadi" class="w-full border border-gray-300 rounded-xl px-4 py-2.5"></div>
+                <div><label class="block text-sm font-semibold mb-1">رمز عبور</label><input type="password" id="regPassword" placeholder="حداقل ۴ کاراکتر" class="w-full border border-gray-300 rounded-xl px-4 py-2.5"></div>
+                <div><label class="block text-sm font-semibold mb-1">کد دانش‌آموزی (اختیاری)</label><input type="text" id="regStudentCode" placeholder="۹۸۲۰۱۲۳" class="w-full border border-gray-300 rounded-xl px-4 py-2.5"></div>
+                <button id="doRegisterBtn" class="btn-primary w-full text-white font-bold py-2.5 rounded-xl shadow-md transition">عضویت در شبکه</button>
+                <p class="text-xs text-center text-gray-500">با ثبت‌نام، شما عضوی از خانواده بزرگ اژه‌ای ۲ هستید.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ======================= MAIN APP (FEED) ======================= -->
+    <div id="appContainer" class="hidden max-w-7xl mx-auto px-4 sm:px-6 py-5">
+        <div class="flex justify-between items-center mb-5 bg-white/70 p-3 rounded-2xl shadow-sm border-r-4 border-orange-500">
+            <div class="flex items-center gap-3">
+                <i class="fas fa-graduation-cap text-3xl text-orange-600"></i>
+                <div><h1 class="text-xl font-extrabold text-gray-800">شبکه اجتماعی شهید اژه‌ای ۲</h1><p class="text-xs text-gray-500">محل امن برای گفتگو و اشتراک‌گذاری</p></div>
+            </div>
+            <div class="flex items-center gap-4"><span id="currentUserNameSpan" class="font-bold text-sm bg-gray-100 px-3 py-1 rounded-full"></span><button id="logoutBtn" class="text-red-500 hover:text-red-700 text-sm bg-red-50 px-3 py-1 rounded-full"><i class="fas fa-sign-out-alt ml-1"></i> خروج</button></div>
+        </div>
+        <div class="flex flex-col md:flex-row gap-6">
+            <aside class="md:w-1/4 lg:w-1/5 order-2 md:order-1">
+                <div class="sticky top-5 bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
+                    <div class="text-center"><img id="profileAvatar" class="w-20 h-20 rounded-full mx-auto border-4 border-orange-200 object-cover" src="https://randomuser.me/api/portraits/lego/1.jpg" alt="avatar"><h3 id="profileName" class="font-bold mt-2 text-lg">دانش‌آموز</h3><p id="profileUsername" class="text-gray-500 text-sm">@username</p><div class="mt-2 inline-block bg-orange-100 text-orange-800 text-xs px-3 py-1 rounded-full"><i class="fas fa-school"></i> شهید اژه‌ای ۲</div></div>
+                    <hr class="my-4"><div class="text-sm text-gray-600 space-y-2"><div><i class="fas fa-envelope w-5 text-orange-500"></i> پیام‌های مدرسه</div><div><i class="fas fa-users w-5 text-orange-500"></i> دانش‌آموزان آنلاین</div><div><i class="fas fa-chalkboard-user w-5 text-orange-500"></i> کانال اطلاع‌رسانی</div></div>
+                </div>
+            </aside>
+            <main class="flex-1 md:w-2/4 order-1 md:order-2">
+                <div class="bg-white rounded-2xl shadow-sm p-4 mb-5 border border-gray-100">
+                    <div class="flex gap-3"><img id="composerAvatar" class="w-11 h-11 rounded-full object-cover" src="https://randomuser.me/api/portraits/lego/1.jpg"><div class="flex-1"><textarea id="newTweetInput" rows="2" placeholder="چی داری فکر می‌کنی؟ با دوستانت به اشتراک بگذار ..." class="w-full resize-none border-none outline-none text-base p-2 placeholder:text-gray-400"></textarea><div class="flex justify-between items-center mt-2 border-t pt-2"><div class="flex gap-2 text-orange-500 text-lg"><i class="far fa-image cursor-pointer hover:bg-orange-50 p-2 rounded-full"></i><i class="far fa-smile cursor-pointer hover:bg-orange-50 p-2 rounded-full"></i></div><div class="flex items-center gap-3"><span id="tweetCharCounter" class="text-xs text-gray-400">۲۸۰</span><button id="sendTweetBtn" class="bg-orange-500 hover:bg-orange-600 disabled:bg-orange-300 text-white font-bold py-2 px-5 rounded-full text-sm transition">ارسال پیام</button></div></div></div></div>
+                </div>
+                <div id="tweetsFeed" class="space-y-3"></div>
+            </main>
+            <aside class="md:w-1/4 lg:w-1/5 order-3 hidden lg:block">
+                <div class="sticky top-5 bg-white/90 rounded-2xl p-4 shadow-sm"><h3 class="font-bold text-base mb-3"><i class="fas fa-fire-flame text-orange-500 ml-1"></i> موضوعات داغ مدرسه</h3><div class="space-y-3 text-sm"><div><span class="text-gray-500 text-xs">امتحانات خرداد</span><div class="font-bold">#نهایی_۱۴۰۵</div></div><div><span class="text-gray-500 text-xs">رویداد ورزشی</span><div class="font-bold">#المپیاد_اژه‌ای</div></div><div><span class="text-gray-500 text-xs">شعر و فرهنگ</span><div class="font-bold">#شهدای_ایران</div></div></div><hr class="my-3"><div class="text-center text-xs text-gray-400">🕊️ یاد شهدای گرانقدر اژه‌ای، همیشه جاویدان</div></div>
+            </aside>
+        </div>
+    </div>
+
+    <!-- MODAL کامنت‌ها -->
+    <div id="commentModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 modal-backdrop">
+        <div class="bg-white rounded-2xl max-w-lg w-full max-h-[85vh] overflow-hidden shadow-2xl"><div class="sticky top-0 bg-white border-b p-4 flex justify-between items-center"><h3 class="font-bold text-lg">پاسخ‌ها</h3><button id="closeModalBtn" class="text-gray-500 hover:bg-gray-100 rounded-full w-8 h-8 flex items-center justify-center"><i class="fas fa-times"></i></button></div><div id="modalCommentsList" class="p-4 space-y-4 max-h-[50vh] overflow-y-auto"></div><div class="border-t p-4 bg-gray-50"><div class="flex gap-3"><img id="modalUserAvatar" class="w-9 h-9 rounded-full object-cover"><div class="flex-1"><textarea id="replyText" rows="2" placeholder="پاسخ خود را بنویسید ..." class="w-full border border-gray-200 rounded-xl p-2 focus:outline-none focus:ring-1 focus:ring-orange-400 text-sm"></textarea><div class="flex justify-end mt-2"><button id="submitReplyBtn" class="bg-orange-500 text-white px-4 py-1.5 rounded-full text-sm font-semibold">ارسال پاسخ</button></div></div></div></div></div>
+    </div>
+
+    <script>
+        let currentUser = null;
+        let users = [];
+        let tweets = [];
+
+        function loadData() {
+            const storedUsers = localStorage.getItem("ejei2_users");
+            const storedTweets = localStorage.getItem("ejei2_tweets");
+            if (storedUsers) { users = JSON.parse(storedUsers); } 
+            else {
+                // حذف سارا حسینی - فقط رضا محمدی و امیرعلی کریمی باقی می‌مانند
+                users = [
+                    { id: "1", fullname: "رضا محمدی", username: "rezam", password: "1234", studentCode: "1400", avatar: "https://randomuser.me/api/portraits/men/32.jpg" },
+                    { id: "3", fullname: "امیرعلی کریمی", username: "amir_ak", password: "1234", studentCode: "1399", avatar: "https://randomuser.me/api/portraits/men/45.jpg" }
+                ];
+                localStorage.setItem("ejei2_users", JSON.stringify(users));
+            }
+            if (storedTweets) { tweets = JSON.parse(storedTweets); } 
+            else {
+                tweets = [
+                    { id: "t1", text: "سلام به همه دوستان! امیدوارم توی امتحانات موفق باشید 💪📚", authorId: "1", authorName: "رضا محمدی", authorUsername: "rezam", authorAvatar: "https://randomuser.me/api/portraits/men/32.jpg", timestamp: new Date(Date.now() - 3600000).toISOString(), likes: [], retweets: [], comments: [] },
+                    { id: "t3", text: "یاد شهدای اژه‌ای گرامی باد. آرمان‌هایشان را ادامه می‌دهیم 🇮🇷", authorId: "3", authorName: "امیرعلی کریمی", authorUsername: "amir_ak", authorAvatar: "https://randomuser.me/api/portraits/men/45.jpg", timestamp: new Date(Date.now() - 86400000).toISOString(), likes: [], retweets: [], comments: [] }
+                ];
+                localStorage.setItem("ejei2_tweets", JSON.stringify(tweets));
+            }
+        }
+        function saveUsers() { localStorage.setItem("ejei2_users", JSON.stringify(users)); }
+        function saveTweets() { localStorage.setItem("ejei2_tweets", JSON.stringify(tweets)); }
+
+        function timeAgo(dateISO) { const date = new Date(dateISO); const now = new Date(); const diff = Math.floor((now - date) / 1000); if (diff < 60) return `${diff} ثانیه پیش`; if (diff < 3600) return `${Math.floor(diff / 60)} دقیقه پیش`; if (diff < 86400) return `${Math.floor(diff / 3600)} ساعت پیش`; return `${Math.floor(diff / 86400)} روز پیش`; }
+
+        function register(fullname, username, password, studentCode) {
+            if (!fullname.trim() || !username.trim() || !password.trim()) return "لطفاً تمام فیلدهای ضروری را پر کنید.";
+            if (password.length < 4) return "رمز عبور باید حداقل ۴ کاراکتر باشد.";
+            if (users.find(u => u.username === username)) return "این نام کاربری قبلاً ثبت شده است.";
+            const newUser = { id: Date.now().toString(), fullname: fullname.trim(), username: username.trim(), password: password, studentCode: studentCode || "کد ندارد", avatar: `https://randomuser.me/api/portraits/lego/${Math.floor(Math.random()*10)}.jpg` };
+            users.push(newUser); saveUsers(); return true;
+        }
+        function login(username, password) { const user = users.find(u => u.username === username && u.password === password); if (user) { currentUser = user; localStorage.setItem("ejei2_currentUser", JSON.stringify(currentUser)); return true; } return false; }
+        function logout() { currentUser = null; localStorage.removeItem("ejei2_currentUser"); }
+        function checkAutoLogin() { const saved = localStorage.getItem("ejei2_currentUser"); if (saved) { try { const userObj = JSON.parse(saved); const freshUser = users.find(u => u.id === userObj.id); if (freshUser) { currentUser = freshUser; return true; } } catch(e) {} } return false; }
+
+        function postTweet(text) { if (!text.trim() || text.length > 280) return false; const newTweet = { id: Date.now() + "_" + Math.random().toString(36).substr(2, 5), text: text.trim(), authorId: currentUser.id, authorName: currentUser.fullname, authorUsername: currentUser.username, authorAvatar: currentUser.avatar, timestamp: new Date().toISOString(), likes: [], retweets: [], comments: [] }; tweets.unshift(newTweet); saveTweets(); renderFeed(); return true; }
+        function toggleLike(tweetId) { const tweet = tweets.find(t => t.id === tweetId); if (!tweet) return; const hasLiked = tweet.likes.includes(currentUser.id); if (hasLiked) tweet.likes = tweet.likes.filter(id => id !== currentUser.id); else tweet.likes.push(currentUser.id); saveTweets(); renderFeed(); }
+        function toggleRetweet(tweetId) { const tweet = tweets.find(t => t.id === tweetId); if (!tweet) return; const hasRetweet = tweet.retweets.includes(currentUser.id); if (hasRetweet) tweet.retweets = tweet.retweets.filter(id => id !== currentUser.id); else tweet.retweets.push(currentUser.id); saveTweets(); renderFeed(); }
+        function deleteTweet(tweetId) { const idx = tweets.findIndex(t => t.id === tweetId); if (idx !== -1 && tweets[idx].authorId === currentUser.id) { tweets.splice(idx, 1); saveTweets(); renderFeed(); } else alert("فقط نویسنده پیام می‌تواند آن را حذف کند."); }
+        function addComment(tweetId, commentText) { if (!commentText.trim()) return false; const tweet = tweets.find(t => t.id === tweetId); if (tweet) { tweet.comments.push({ id: Date.now() + "_cmt", text: commentText.trim(), authorName: currentUser.fullname, authorUsername: currentUser.username, authorAvatar: currentUser.avatar, timestamp: new Date().toISOString() }); saveTweets(); renderFeed(); return true; } return false; }
+
+        function renderFeed() {
+            const feedDiv = document.getElementById("tweetsFeed"); if (!feedDiv) return;
+            if (tweets.length === 0) { feedDiv.innerHTML = `<div class="bg-white rounded-xl p-10 text-center text-gray-400"><i class="fas fa-comment-dots text-4xl mb-2"></i><br>هنوز پیامی ارسال نشده. اولین نفری باش که نظرت رو مینویسی!</div>`; return; }
+            let html = "";
+            for (let tweet of tweets) {
+                const likeCount = tweet.likes.length, retweetCount = tweet.retweets.length, commentCount = tweet.comments.length, isLiked = tweet.likes.includes(currentUser.id), isRetweeted = tweet.retweets.includes(currentUser.id), isAuthor = tweet.authorId === currentUser.id;
+                html += `<div class="tweet-card bg-white rounded-xl p-4 shadow-sm border border-gray-100 transition" data-tweet-id="${tweet.id}"><div class="flex gap-3"><img class="w-10 h-10 rounded-full object-cover" src="${tweet.authorAvatar}" onerror="this.src='https://randomuser.me/api/portraits/lego/1.jpg'"><div class="flex-1"><div class="flex items-center gap-2 flex-wrap"><span class="font-bold text-gray-800">${escapeHtml(tweet.authorName)}</span><span class="text-gray-500 text-sm">@${escapeHtml(tweet.authorUsername)}</span><span class="text-gray-400 text-xs">· ${timeAgo(tweet.timestamp)}</span>${isAuthor ? `<button class="delete-tweet-btn mr-auto text-gray-400 hover:text-red-500"><i class="far fa-trash-alt"></i></button>` : ''}</div><p class="text-gray-800 mt-1 whitespace-pre-wrap text-[15px] leading-relaxed">${escapeHtml(tweet.text)}</p><div class="flex justify-between mt-3 max-w-md text-gray-500"><button class="comment-trigger flex items-center gap-2 hover:text-orange-500 transition" data-id="${tweet.id}"><i class="far fa-comment"></i> <span class="text-sm">${commentCount}</span></button><button class="retweet-trigger flex items-center gap-2 hover:text-green-600 transition ${isRetweeted ? 'retweet-active' : ''}" data-id="${tweet.id}"><i class="fas fa-retweet"></i> <span class="text-sm">${retweetCount}</span></button><button class="like-trigger flex items-center gap-2 hover:text-pink-600 transition ${isLiked ? 'like-active' : ''}" data-id="${tweet.id}"><i class="far fa-heart"></i> <span class="text-sm">${likeCount}</span></button></div></div></div></div>`;
+            }
+            feedDiv.innerHTML = html; attachTweetEvents();
+        }
+        function escapeHtml(str) { if(!str) return ''; return str.replace(/[&<>]/g, function(m){ if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
+        function attachTweetEvents() { document.querySelectorAll('.like-trigger').forEach(btn => btn.addEventListener('click', (e) => { e.stopPropagation(); toggleLike(btn.dataset.id); })); document.querySelectorAll('.retweet-trigger').forEach(btn => btn.addEventListener('click', (e) => { e.stopPropagation(); toggleRetweet(btn.dataset.id); })); document.querySelectorAll('.delete-tweet-btn').forEach(btn => { btn.addEventListener('click', (e) => { e.stopPropagation(); const card = btn.closest('.tweet-card'); if(card) deleteTweet(card.dataset.tweetId); }); }); document.querySelectorAll('.comment-trigger').forEach(btn => btn.addEventListener('click', (e) => { e.stopPropagation(); openCommentModal(btn.dataset.id); })); }
+        let activeTweetId = null; const modal = document.getElementById('commentModal'), modalCommentsList = document.getElementById('modalCommentsList'), replyTextarea = document.getElementById('replyText');
+        function openCommentModal(tweetId) { activeTweetId = tweetId; const tweet = tweets.find(t => t.id === tweetId); if (!tweet) return; renderCommentsModal(tweet); modal.classList.remove('hidden'); modal.classList.add('flex'); replyTextarea.value = ''; document.getElementById('modalUserAvatar').src = currentUser.avatar; }
+        function renderCommentsModal(tweet) { if (!modalCommentsList) return; if (!tweet.comments.length) { modalCommentsList.innerHTML = '<div class="text-center text-gray-400 py-5">هنوز پاسخی ثبت نشده، اولین نفر باش!</div>'; return; } let html = ''; [...tweet.comments].reverse().forEach(c => { html += `<div class="flex gap-3 border-b pb-3"><div class="w-8 h-8 rounded-full bg-orange-100 flex items-center justify-center text-orange-700">${c.authorName.charAt(0)}</div><div class="flex-1"><div class="flex items-center gap-2"><span class="font-semibold text-sm">${escapeHtml(c.authorName)}</span><span class="text-gray-400 text-xs">@${escapeHtml(c.authorUsername)}</span><span class="text-gray-400 text-xs">· ${timeAgo(c.timestamp)}</span></div><p class="text-gray-700 text-sm mt-1">${escapeHtml(c.text)}</p></div></div>`; }); modalCommentsList.innerHTML = html; }
+        function closeModal() { modal.classList.add('hidden'); modal.classList.remove('flex'); activeTweetId = null; }
+        function submitReply() { if (!activeTweetId) return; const reply = replyTextarea.value.trim(); if (!reply) return; addComment(activeTweetId, reply); const tweet = tweets.find(t => t.id === activeTweetId); if (tweet) renderCommentsModal(tweet); replyTextarea.value = ''; }
+
+        function showAppUI() { document.getElementById("authContainer").classList.add("hidden"); document.getElementById("appContainer").classList.remove("hidden"); document.getElementById("profileName").innerText = currentUser.fullname; document.getElementById("profileUsername").innerText = "@" + currentUser.username; document.getElementById("currentUserNameSpan").innerHTML = `<i class="fas fa-user-circle"></i> ${currentUser.fullname}`; document.getElementById("profileAvatar").src = currentUser.avatar; document.getElementById("composerAvatar").src = currentUser.avatar; document.getElementById("modalUserAvatar").src = currentUser.avatar; renderFeed(); }
+        function showAuthUI() { document.getElementById("authContainer").classList.remove("hidden"); document.getElementById("appContainer").classList.add("hidden"); }
+
+        function initAuth() {
+            const loginPanel = document.getElementById("loginFormPanel"), registerPanel = document.getElementById("registerFormPanel"), loginTab = document.getElementById("loginTabBtn"), registerTab = document.getElementById("registerTabBtn");
+            loginTab.onclick = () => { loginPanel.classList.remove("hidden"); registerPanel.classList.add("hidden"); loginTab.classList.add("border-b-2","border-orange-500","text-orange-600"); registerTab.classList.remove("border-b-2","border-orange-500","text-orange-600"); registerTab.classList.add("text-gray-500"); };
+            registerTab.onclick = () => { registerPanel.classList.remove("hidden"); loginPanel.classList.add("hidden"); registerTab.classList.add("border-b-2","border-orange-500","text-orange-600"); loginTab.classList.remove("border-b-2","border-orange-500","text-orange-600"); loginTab.classList.add("text-gray-500"); };
+            document.getElementById("doLoginBtn").onclick = () => { const uname = document.getElementById("loginUsername").value, pwd = document.getElementById("loginPassword").value; if(login(uname, pwd)) { showAppUI(); initComposer(); } else { alert("نام کاربری یا رمز اشتباه است"); } };
+            document.getElementById("doRegisterBtn").onclick = () => { const full = document.getElementById("regFullname").value, uname = document.getElementById("regUsername").value, pwd = document.getElementById("regPassword").value, code = document.getElementById("regStudentCode").value; const res = register(full, uname, pwd, code); if(res === true) { alert("عضویت موفق! اکنون وارد شوید."); loginTab.click(); } else { alert(res); } };
+            document.getElementById("logoutBtn").onclick = () => { logout(); showAuthUI(); };
+        }
+        function initComposer() { const input = document.getElementById("newTweetInput"), sendBtn = document.getElementById("sendTweetBtn"), charSpan = document.getElementById("tweetCharCounter"); function updateChar() { let len = input.value.length; charSpan.innerText = 280 - len; sendBtn.disabled = (len === 0 || len > 280); if(len>280) charSpan.classList.add("text-red-500"); else charSpan.classList.remove("text-red-500"); } input.addEventListener("input", updateChar); sendBtn.onclick = () => { if(postTweet(input.value)) { input.value = ""; updateChar(); } else alert("متن نمی‌تواند خالی یا بیشتر از ۲۸۰ کاراکتر باشد."); }; updateChar(); }
+
+        loadData(); initAuth(); if(checkAutoLogin()) { showAppUI(); initComposer(); } else { showAuthUI(); }
+        document.getElementById("closeModalBtn")?.addEventListener("click", closeModal);
+        document.getElementById("submitReplyBtn")?.addEventListener("click", submitReply);
+        modal?.addEventListener("click", (e) => { if(e.target === modal) closeModal(); });
+    </script>
+</body>
+</html>
